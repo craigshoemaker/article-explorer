@@ -1,7 +1,7 @@
 {
 	"name": "spinefeed",
-	"version": "1.0.0",
-	"description": "A simple kit for Electron, Angular 6 and Webpack 4 including a live reload system for Angular.",
+	"version": "0.0.1",
+	"description": "Articles Viewer for Microsoft documentation",
 	"repository": "https://github.com/craigshoemaker/spinefeed",
 	"homepage": "https: //github.com/craigshoemaker/spinefeed",
 	"bugs": {
@@ -12,6 +12,7 @@
 	"license": "MIT",
 	"main": "electron.js",
 	"scripts": {
+		"test": "jasmine-ts \"src/app/**/*.spec.ts\"",
 		"start": "npm run dev",
 		"dev": "tsc electron.ts --outDir . && cross-env NODE_ENV=dev webpack-dev-server --port=4200",
 		"prod": "webpack && electron dist/electron.js",
@@ -23,6 +24,7 @@
 		"installer:linux": "npm run packager:linux && cross-env NODE_OS=linux node builder/installer.js"
 	},
 	"devDependencies": {
+		"@types/jasmine": "^2.8.7",
 		"clean-webpack-plugin": "^0.1.19",
 		"concurrently": "^3.5.1",
 		"copy-webpack-plugin": "^4.5.1",
@@ -33,8 +35,10 @@
 		"file-loader": "^1.1.11",
 		"html-loader": "^0.5.5",
 		"html-webpack-plugin": "^3.2.0",
-		"img-loader": "^3.0.0",
 		"imagemin": "^5.3.1",
+		"img-loader": "^3.0.0",
+		"jasmine": "^3.1.0",
+		"jasmine-ts": "^0.2.1",
 		"lodash": "^4.17.10",
 		"node-sass": "^4.9.0",
 		"postcss-loader": "^2.1.5",
