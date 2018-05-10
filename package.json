@@ -1,25 +1,18 @@
 {
-	"name": "electron-angular-webpack",
+	"name": "spinefeed",
 	"version": "1.0.0",
 	"description": "A simple kit for Electron, Angular 6 and Webpack 4 including a live reload system for Angular.",
-	"repository": "https://github.com/lbassin/electron-angular-webpack",
-	"homepage": "https: //github.com/lbassin/electron-angular-webpack#readme",
+	"repository": "https://github.com/craigshoemaker/spinefeed",
+	"homepage": "https: //github.com/craigshoemaker/spinefeed",
 	"bugs": {
-		"url": "https://github.com/lbassin/electron-angular-webpack/issues"
+		"url": "https://github.com/craigshoemaker/spinefeed/issues"
 	},
-	"keywords": [
-		"electron",
-		"angular",
-		"webpack",
-		"boilerplate",
-		"live reload",
-		"typescript",
-		"sass"
-	],
-	"author": "BASSIN Laurent & MARQUET Maxime",
+	"keywords": [],
+	"author": "Craig Shoemaker",
 	"license": "MIT",
 	"main": "electron.js",
 	"scripts": {
+		"start": "npm run dev",
 		"dev": "tsc electron.ts --outDir . && cross-env NODE_ENV=dev webpack-dev-server --port=4200",
 		"prod": "webpack && electron dist/electron.js",
 		"packager:win": "cross-env NODE_OS=win node builder/packager.js",
@@ -77,6 +70,7 @@
 		"core-js": "^2.5.5",
 		"electron": "^2.0.0",
 		"rxjs": "^6.1.0",
+		"walk": "^2.3.13",
 		"zone.js": "^0.8.26"
 	}
 }
