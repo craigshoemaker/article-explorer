@@ -20,7 +20,7 @@ export class ArticlesReader {
             });
 
             walker.on('errors', (root, stats, next) => {
-                observer.throwError(stats);
+                observer.error(stats);
                 next();
             });
 
