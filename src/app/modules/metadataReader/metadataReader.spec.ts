@@ -16,6 +16,16 @@ ms.custom: type
 
 describe('MetadataReader', () => {
 
+    describe('getValue', () => {
+
+        it('should return value corresponding to given key', () => {
+            const reader = new MetadataReader();
+            const value = reader.getValue(input, 'title');
+            expect(value).toEqual('title');
+        });
+
+    });
+
     describe('parse', () => {
 
         it('should return an instance of Metadata', () => {

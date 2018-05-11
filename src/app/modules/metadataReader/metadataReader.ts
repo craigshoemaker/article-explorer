@@ -4,7 +4,7 @@ export class MetadataReader {
 
     constructor() {}
 
-    private getValue(input: string, key: string): string {
+    public getValue(input: string, key: string): string {
         key = key.replace('.', '\\.');
         const regex = new RegExp(`${key}\s?:\s?(.*)`);
         const matches = regex.exec(input);
