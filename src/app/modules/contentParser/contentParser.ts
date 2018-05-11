@@ -1,7 +1,4 @@
-export class ContentModel {
-    title: string;
-    excerpt: string;
-}
+import { ContentModel } from '../contentModel';
 
 export class ContentParser {
 
