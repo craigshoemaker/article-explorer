@@ -21,7 +21,7 @@ This is the article body paragraph two.
 This is the article body paragraph three.
 `;
 
-describe('ContentReader', () => {
+describe('ContentParser', () => {
 
     describe('getTitle', () => {
         it('should return the article title', () => {

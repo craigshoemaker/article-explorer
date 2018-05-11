@@ -1,6 +1,6 @@
 import { Metadata } from '../metaData';
 
-export class MetadataReader {
+export class MetadataParser {
 
     constructor() {}
 
