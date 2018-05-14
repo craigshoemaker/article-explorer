@@ -1,10 +1,11 @@
-@font-face {
-  font-family: 'Raleway';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Raleway'), local('Raleway-Regular'), url('./assets/fonts/Raleway-Regular.woff2') format('woff2');
+body {
+  overflow:hidden;
 }
 
-body{
-  font-family: 'Raleway', sans-serif;
+.app-container {
+    margin: 20px;
+}
+
+.full {
+  width:100%;
 }
