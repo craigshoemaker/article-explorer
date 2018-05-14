@@ -15,6 +15,14 @@ describe('ArticleReader', () => {
             });
         });
 
+        it('should include filePath', done => {
+            const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
+            ArticleReader.read(filePath).then(article => {
+                expect(article.filePath).toEqual(filePath);
+                done();
+            });
+        });
+
         it('should create a metadata instance', done => {
             const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
             ArticleReader.read(filePath).then(article => {
@@ -43,6 +51,30 @@ describe('ArticleReader', () => {
             const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
             ArticleReader.read(filePath).then(article => {
                 expect(article.content.title).toEqual('Create a virtual machine and storage account for a scalable application');
+                done();
+            });
+        });
+
+        it('should return correct value for hasContent', done => {
+            const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
+            ArticleReader.read(filePath).then(article => {
+                expect(article.hasContent()).toEqual(true);
+                done();
+            });
+        });
+
+        it('should read content if provided name matches', done => {
+            const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
+            ArticleReader.read(filePath, { name: 'roygara' }).then(article => {
+                expect(article.hasContent()).toEqual(true);
+                done();
+            });
+        });
+
+        it('should not read content if provided name does not match', done => {
+            const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
+            ArticleReader.read(filePath, { name: 'craigshoemaker' }).then(article => {
+                expect(article.hasContent()).toEqual(false);
                 done();
             });
         });
