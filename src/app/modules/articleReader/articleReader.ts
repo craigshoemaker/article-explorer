@@ -2,9 +2,9 @@ import * as Walk from 'walk';
 import * as path from 'path';
 import { Observable } from 'rxjs'
 
-export class ArticlesReader {
+export class ArticleReader {
 
-    read(folderPath: string): Observable<any> {
+    public static list(folderPath: string): Observable<any> {
         return Observable.create(observer => {
             const walker = Walk.walk(folderPath);
     
