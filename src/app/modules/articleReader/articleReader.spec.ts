@@ -5,6 +5,49 @@ import * as path from 'path';
 
 describe('ArticleReader', () => {
 
+    describe('read', () => {
+
+        it('should return an ArticleReader instance', done => {
+            const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
+            ArticleReader.read(filePath).then(article => {
+                expect(article).not.toBeNull();
+                done();
+            });
+        });
+
+        it('should create a metadata instance', done => {
+            const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
+            ArticleReader.read(filePath).then(article => {
+                expect(article.metadata).not.toBeNull();
+                done();
+            });
+        });
+
+        it('should return metadata values', done => {
+            const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
+            ArticleReader.read(filePath).then(article => {
+                expect(article.metadata.title).toEqual('Create a VM and storage account for a scalable application in Azure | Microsoft Docs');
+                done();
+            });
+        });
+
+        it('should create a content instance', done => {
+            const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
+            ArticleReader.read(filePath).then(article => {
+                expect(article.content).not.toBeNull();
+                done();
+            });
+        });
+
+        it('should create a content instance', done => {
+            const filePath = path.resolve(__dirname, '../../../../spec/data/article.md');
+            ArticleReader.read(filePath).then(article => {
+                expect(article.content.title).toEqual('Create a virtual machine and storage account for a scalable application');
+                done();
+            });
+        });
+    });
+
     describe('list', () => {
         it('should list Markdown files from file system', done => {
             const folderPath = path.resolve(__dirname, '../../../../spec/data');
