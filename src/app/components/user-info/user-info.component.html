@@ -1,0 +1,16 @@
+<div class="user-info">
+    <img class="avatar" [src]="info.avatar_url" [alt]="info.name" width="125">
+    <div class="name">
+      <input 
+            [(ngModel)]="login" 
+            (change)="loginChanged()" 
+            onclick="this.select()" 
+            name="login" 
+            class="login"
+            type="text" 
+            >
+    </div>
+    <div class="bio">{{ info.bio }}</div>
+    <div class="location">{{ info.location }}</div>
+    <div class="email">{{ info.email }}</div>
+  </div>

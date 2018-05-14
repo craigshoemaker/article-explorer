@@ -24,7 +24,7 @@ export class UserInfoService {
     return login;
   }
 
-  getInfo() {
+  getInfo(): any {
     return this.http.get(`https://api.github.com/users/${ this.getLogin() }`);
   }
 
