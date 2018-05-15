@@ -24,7 +24,12 @@ let dev = args.some(arg => arg === '--dev');
 
 function createWindow() {
 	// Create the browser window.
-	mainWindow = new BrowserWindow({ width: 1024, height: 720 });
+	mainWindow = new BrowserWindow({ 
+		width: 1024, 
+		height: 720, 
+		minWidth: 900,
+		minHeight: 600
+	});
 	mainWindow.setMenu(null);
 
 	if (!dev) {
