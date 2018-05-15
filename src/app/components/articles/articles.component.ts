@@ -3,8 +3,11 @@ import { Subscription, Observable } from 'rxjs';
 import * as openInEditor from 'open-in-editor';
 
 import { ArticleService } from '../../services/article.service';
-import { ArticleInfo } from '../../modules/articleInfo';
 import { ArticleReader } from '../../modules/articleReader/articleReader';
+import { MessageService } from '../../services/message.service';
+import { MessageEventTypes } from '../../services/messageEventTypes';
+import { UserInfoService } from '../../services/user-info.service';
+import { PathService } from '../../services/path.service';
 
 @Component({
   selector: 'app-articles',
@@ -13,36 +16,62 @@ import { ArticleReader } from '../../modules/articleReader/articleReader';
 })
 export class ArticlesComponent implements OnInit, OnDestroy {
   articles: ArticleReader[] = [];
-  subscription: Subscription;
   isLoading: boolean = true;
-  
-  constructor(private articleService: ArticleService) {}
 
-  toggleLoader() {
-    this.isLoading = !this.isLoading;
-  }
+  articlesSubscription: Subscription;
+  pathSubscription: Subscription;
+  userSubscription: Subscription;
+  
+  constructor(private articleService: ArticleService,
+              private messageService: MessageService,
+              private userInfoService: UserInfoService,
+              private pathService: PathService) {}
 
   articleClick(e) {
     const filePath = e.currentTarget.getAttribute('data-path');
     const editor = openInEditor.configure({
-      editor: 'code'
+      editor: 'code' // todo: fallback if code is not installed
     }, err => alert(err));
-    editor.open(filePath + ':10:5');
+    editor.open(filePath + ':10:5'); // todo: move to config
+  }
+
+  getArticles(name:string, filePath: string) {
+    this.isLoading = true;
+    this.articles = [];
+    const component = this;
+    
+    this.articlesSubscription = this.articleService.getArticles(name, filePath).subscribe({
+      next: article => this.articles.push(article),
+      error: err => alert(err),
+      complete: () =>  { 
+        component.isLoading = false;
+      }
+    });
   }
 
   ngOnInit() {
-      const filePath = 'C:\\Users\\cshoe\\Documents\\data\\docs\\azure-docs-pr\\articles\\storage';
-      const name = 'craigshoemaker';
-      const component = this;
-      this.subscription = this.articleService.getArticles(name, filePath).subscribe({
-        next: article => this.articles.push(article),
-        error: err => alert(err),
-        complete: () => component.toggleLoader()
-      });
+    const filePath = this.pathService.getPath();
+    const name = this.userInfoService.getLogin();
+
+    if(filePath && filePath.length > 0) {
+      this.getArticles(name, filePath);
+    }
+
+    this.userSubscription = this.messageService.subscribe(MessageEventTypes.UserChanged, value => {
+      const path = this.pathService.getPath();
+      this.getArticles(value.name, path);
+    });
+
+    this.pathSubscription = this.messageService.subscribe(MessageEventTypes.PathChanged, value => {
+      const name = this.userInfoService.getLogin();
+      this.getArticles(name, value.path);
+    });
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.userSubscription.unsubscribe();
+    this.pathSubscription.unsubscribe();
+    this.articlesSubscription.unsubscribe();
   }
 
 }

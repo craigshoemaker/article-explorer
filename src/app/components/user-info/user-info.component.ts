@@ -17,7 +17,9 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   constructor(private userInfoService: UserInfoService) {}
 
   private getInfo() {
-    this.infoSubscription = this.userInfoService.getInfo().subscribe(data => this.info = JSON.parse(data._body));
+    this.infoSubscription = this.userInfoService
+                                  .getInfo()
+                                  .subscribe(data => this.info = JSON.parse(data._body));
   }
 
   loginChanged() {

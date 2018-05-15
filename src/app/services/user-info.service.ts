@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Http } from '@angular/http';
 import { MessageService } from './message.service';
 import { MessageEventTypes } from './messageEventTypes';
-import { Observable } from 'rxjs';
 
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -12,7 +11,8 @@ const httpOptions = {
 @Injectable()
 export class UserInfoService {
 
-  constructor(private http: Http, private messageService: MessageService) { }
+  constructor(private http: Http, 
+              private messageService: MessageService) { }
 
   changeLogin(name: string) {
     window.localStorage.setItem('login', name);
@@ -20,17 +20,14 @@ export class UserInfoService {
   }
 
   getLogin() {
-    const login = window.localStorage.getItem('login') ? window.localStorage.getItem('login') : 'microsoft';
+    const login = window.localStorage.getItem('login') ? 
+                  window.localStorage.getItem('login') : 
+                  'microsoft';
     return login;
   }
 
   getInfo(): any {
     return this.http.get(`https://api.github.com/users/${ this.getLogin() }`);
-  }
-
-  private handleError(err: HttpErrorResponse) {
-    console.log(err.message);
-    return Observable.throw(err.message);
   }
 
 }

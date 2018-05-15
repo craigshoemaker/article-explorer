@@ -38,13 +38,11 @@ export class ArticleReader {
 
                 article.metadata = metadataParser.parse(contents);
 
-                if(options) {
-                    if(options.name) {
-                        if(article.metadata.github === options.name) {
-                            article.content = contentParser.parse(contents);
-                        } else {
-                            article.content = null;
-                        }
+                if(options && options.name) {
+                    if(article.metadata.github === options.name) {
+                        article.content = contentParser.parse(contents);
+                    } else {
+                        article.content = null;
                     }
                 } else {
                     article.content = contentParser.parse(contents);                    

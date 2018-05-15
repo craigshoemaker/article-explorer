@@ -7,10 +7,12 @@ import { HttpModule } from '@angular/http';
 import { ArticleService } from './services/article.service';
 import { UserInfoService } from './services/user-info.service';
 import { MessageService } from './services/message.service';
+import { PathService } from './services/path.service';
 
 import { AppComponent } from './app.component';
 import { UserInfoComponent } from './components/user-info/user-info.component';
 import { ArticlesComponent } from './components/articles/articles.component';
+import { PathSelectorComponent } from './components/path-selector/path-selector.component';
 
 @NgModule({
     imports: [
@@ -22,12 +24,14 @@ import { ArticlesComponent } from './components/articles/articles.component';
     providers:[
         ArticleService,
         UserInfoService,
-        MessageService
+        MessageService,
+        PathService
     ],
     declarations: [
         AppComponent,
         UserInfoComponent,
-        ArticlesComponent
+        ArticlesComponent,
+        PathSelectorComponent
     ],
     bootstrap: [AppComponent]
 })
