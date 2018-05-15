@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import * as openInEditor from 'open-in-editor';
+import * as moment from 'moment';
 
 import { ArticleService } from '../../services/article.service';
 import { ArticleReader } from '../../modules/articleReader/articleReader';
@@ -15,13 +16,19 @@ import { PathService } from '../../services/path.service';
   styleUrls: [require('./articles.component.scss')]
 })
 export class ArticlesComponent implements OnInit, OnDestroy {
+
+  articles$: Observable<ArticleReader[]>;
   articles: ArticleReader[] = [];
-  isLoading: boolean = true;
+  all: ArticleReader[] = [];
+  olderThan30Days: ArticleReader[] = [];
+  olderThan90Days: ArticleReader[] =[];
+
+  isLoading: boolean = false;
 
   articlesSubscription: Subscription;
   pathSubscription: Subscription;
   userSubscription: Subscription;
-  
+
   constructor(private articleService: ArticleService,
               private messageService: MessageService,
               private userInfoService: UserInfoService,
@@ -30,7 +37,7 @@ export class ArticlesComponent implements OnInit, OnDestroy {
   articleClick(e) {
     const filePath = e.currentTarget.getAttribute('data-path');
     const editor = openInEditor.configure({
-      editor: 'code' // todo: fallback if code is not installed
+      editor: 'code' // todo: fallback if vscode is not installed
     }, err => alert(err));
     editor.open(filePath + ':10:5'); // todo: move to config
   }
@@ -39,11 +46,26 @@ export class ArticlesComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.articles = [];
     const component = this;
-    
+
+    // John is playing around here
+    // this.articles$ = this.articleService.getArticles2(name, filePath);
+    // ...
+
     this.articlesSubscription = this.articleService.getArticles(name, filePath).subscribe({
       next: article => this.articles.push(article),
       error: err => alert(err),
-      complete: () =>  { 
+      complete: () =>  {
+        const thirtyDaysFromNow = moment().add(30, 'd').toDate();
+        const ninetyDaysFromNow = moment().add(90, 'd').toDate();
+
+        this.olderThan30Days = this.articles.filter(article => {
+          return article.metadata.refreshDate > thirtyDaysFromNow;
+        });
+
+        this.olderThan90Days = this.articles.filter(article => {
+          return article.metadata.refreshDate >= ninetyDaysFromNow;
+        });
+debugger;
         component.isLoading = false;
       }
     });
