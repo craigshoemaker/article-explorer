@@ -1,4 +1,9 @@
-<h2>Articles!</h2>
-<div *ngFor='let article of articles'>
-    article {{ article.filePath }}
+<div class="articles">
+    <div *ngFor='let article of articles'>
+        <div [attr.data-path]="article.filePath" class="article">
+            <h2>{{ article.content.title }}</h2>
+            <p>{{ article.content.excerpt.substr(0, 200) }}...</p>
+            <p class="tag is-light">{{ article.metadata.refreshDate.toDateString() }}</p>
+        </div>
+    </div>
 </div>

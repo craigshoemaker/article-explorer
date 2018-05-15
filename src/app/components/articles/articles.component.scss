@@ -1,0 +1,23 @@
+h2 {
+    font-weight: bold;
+    font-size: 1.25em;
+}
+.articles {
+    margin-top:50px;
+}
+
+.article {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.article:hover {
+    background-color: #eee;
+}
+
+.article a {
+    color:inherit;
+}
