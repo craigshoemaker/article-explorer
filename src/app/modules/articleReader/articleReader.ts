@@ -60,7 +60,7 @@ export class ArticleReader {
             const walker = Walk.walk(folderPath);
     
             walker.on('file', (root, stats, next) => {
-                if (/\.md/.test(stats.name)) {
+                if (/\.md$/.test(stats.name)) {
                     const info = new ArticleInfo(root, path.join(root, stats.name), stats);
                     observer.next(info);
                 }
@@ -72,9 +72,7 @@ export class ArticleReader {
                 next();
             });
 
-            walker.on('end', () => {
-                observer.complete();
-            });
+            walker.on('end', () => observer.complete());
         });
     }
 }

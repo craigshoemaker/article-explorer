@@ -9,7 +9,7 @@ export class MetadataParser {
         const regex = new RegExp(`${key}\s?:\s?(.*)`);
         const matches = regex.exec(input);
         let value = '';
-        if(matches.length > 1) {
+        if(matches && matches.length > 1) {
             value = matches[1].trim();
         }
         return value;
