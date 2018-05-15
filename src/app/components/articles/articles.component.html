@@ -1,6 +1,11 @@
+<div [hidden]="!isLoading">
+    <img src="../../../assets/images/loader.gif">
+</div>
 <div class="articles">
     <div *ngFor='let article of articles'>
-        <div [attr.data-path]="article.filePath" class="article">
+        <div [attr.data-path]="article.filePath" 
+            (click)="articleClick($event)"
+            class="article">
             <h2>{{ article.content.title }}</h2>
             <p>{{ article.content.excerpt.substr(0, 200) }}...</p>
             <p class="tag is-light">{{ article.metadata.refreshDate.toDateString() }}</p>

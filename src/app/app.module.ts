@@ -23,5 +23,4 @@ import { ArticlesComponent } from './components/articles/articles.component';
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule {}
