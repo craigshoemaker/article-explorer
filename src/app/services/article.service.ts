@@ -8,6 +8,7 @@ import {
   shareReplay,
   switchMap
 } from 'rxjs/operators';
+import { Article } from '../modules/articleReader/article.model';
 import { ArticleReader } from '../modules/articleReader/articleReader';
 import { Message, MessageService } from './message.service';
 import { MessageEventTypes } from './messageEventTypes';
@@ -44,15 +45,13 @@ export class ArticleService {
     switchMap(({ user, path }) => {
       this.isLoading$.next(true);
       if (user && path) {
-        return this.articleReader
-          .list(path)
-          .pipe(
-            mergeMap(info =>
-              this.articleReader.read(info.path, { name: name })
-            ),
-            filter(reader => !!reader.content),
-            finalize(() => this.isLoading$.next(false))
-          );
+        return this.articleReader.articleInfo(path).pipe(
+          mergeMap(info => this.articleReader.read(info.path)),
+          filter(article => article.metadata.github === user),
+          // Now turn it into Observble<Article[]>
+          scan((acc, article: Article) => [...acc, article], []),
+          finalize(() => this.isLoading$.next(false))
+        );
       }
       this.isLoading$.next(false);
       return EMPTY;

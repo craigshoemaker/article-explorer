@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import * as openInEditor from 'open-in-editor';
-import { Observable, concat, pipe } from 'rxjs';
-import { map, scan, shareReplay } from 'rxjs/operators';
-import { Article } from '../../modules/articleReader/articleReader';
+import { Observable, pipe } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Article } from '../../modules/articleReader/article.model';
 import { ArticleService } from '../../services/article.service';
-import { MessageService } from '../../services/message.service';
-import { PathService } from '../../services/path.service';
-import { UserInfoService } from '../../services/user-info.service';
 
 const mapFilterFromNow = (fromNow: Date) =>
   pipe(
@@ -24,26 +21,22 @@ export class ArticlesComponent implements OnInit {
   olderThan30Days$: Observable<Article[]>;
   olderThan90Days$: Observable<Article[]>;
 
-  constructor(
-    private articleService: ArticleService,
-    private messageService: MessageService,
-    private userInfoService: UserInfoService,
-    private pathService: PathService
-  ) {}
+  constructor(private articleService: ArticleService) {}
 
   isLoading$ = this.articleService.isLoading$;
 
   // Now get an array of Articles
-  articles$ = concat(
-    this.articleService.articles$.pipe(
-      scan((acc, article: any) => {
-        const foo = [...acc, article];
-        return [...acc, article];
-      }, []),
-      shareReplay(1)
-    ),
-    () => {}
-  );
+  articles$ = this.articleService.articles$;
+  // articles$ = concat(
+  //   this.articleService.articles$.pipe(
+  //     scan((acc, article: any) => {
+  //       const foo = [...acc, article];
+  //       return [...acc, article];
+  //     }, []),
+  //     shareReplay(1)
+  //   ),
+  //   () => {}
+  // );
 
   // const thirtyDaysFromNow = moment()
   //   .add(30, 'd')

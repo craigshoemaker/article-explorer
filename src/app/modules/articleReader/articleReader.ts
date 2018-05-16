@@ -4,35 +4,21 @@ import * as path from 'path';
 import { Observable } from 'rxjs';
 import * as Walk from 'walk';
 import { ArticleInfo } from '../articleInfo';
-import { ContentModel } from '../contentModel';
 import { ContentParser } from '../contentParser/contentParser';
-import { Metadata } from '../metaData';
 import { MetadataParser } from '../metadataParser/metadataParser';
-
-export class Article {
-  filePath: string;
-  metadata: Metadata;
-  content: ContentModel;
-}
+import { Article } from './article.model';
 
 @Injectable()
 export class ArticleReader {
-  // filePath: string;
-  // metadata: Metadata;
-  // content: ContentModel;
-
   constructor(private zone: NgZone) {}
 
-  // hasContent(): boolean {
-  //   return !!this.content; //  !== null;
-  // }
-
-  public read(filePath: string, options?: any) {
+  public read(filePath: string) {
     return new Promise<Article>((resolve, reject) => {
       const reader = new LineReader(filePath, { end: 800 });
       const article = new Article();
-      // const article = this;
       const data = [];
+      const metadataParser = new MetadataParser();
+      const contentParser = new ContentParser();
 
       article.filePath = filePath;
 
@@ -41,30 +27,14 @@ export class ArticleReader {
 
       reader.on('end', () => {
         const contents = data.join('\n');
-
-        const metadataParser = new MetadataParser();
-        const contentParser = new ContentParser();
-
         article.metadata = metadataParser.parse(contents);
-
-        if (options && options.name) {
-          if (article.metadata.github === options.name) {
-            article.content = contentParser.parse(contents);
-          } else {
-            article.content = null;
-          }
-        } else {
-          article.content = contentParser.parse(contents);
-        }
-
-        this.zone.run(() => {
-          resolve(article);
-        });
+        article.content = contentParser.parse(contents);
+        this.zone.run(() => resolve(article));
       });
     });
   }
 
-  public list(folderPath: string): Observable<ArticleInfo> {
+  public articleInfo(folderPath: string): Observable<ArticleInfo> {
     return Observable.create(observer => {
       const walker = Walk.walk(folderPath);
 
@@ -77,8 +47,6 @@ export class ArticleReader {
           );
 
           this.zone.run(() => observer.next(info));
-
-          // observer.next(info);
         }
         next();
       });
