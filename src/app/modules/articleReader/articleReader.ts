@@ -22,7 +22,9 @@ export class ArticleReader {
 
       article.filePath = filePath;
 
-      reader.on('error', err => reject(err));
+      reader.on('error', err => {
+        this.zone.run(() => reject(err));
+      });
       reader.on('line', line => data.push(line));
 
       reader.on('end', () => {
@@ -52,12 +54,12 @@ export class ArticleReader {
       });
 
       walker.on('errors', (root, stats, next) => {
-        observer.error(stats);
+        this.zone.run(() => observer.error(stats));
         next();
       });
 
       walker.on('end', () => {
-        observer.complete();
+        this.zone.run(() => observer.complete());
       });
     });
   }

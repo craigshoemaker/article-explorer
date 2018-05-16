@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY } from 'rxjs';
 import {
+  catchError,
   filter,
   finalize,
   mergeMap,
@@ -50,7 +51,14 @@ export class ArticleService {
           filter(article => article.metadata.github === user),
           // Now turn it into Observble<Article[]>
           scan((acc, article: Article) => [...acc, article], []),
-          finalize(() => this.isLoading$.next(false))
+          catchError(err => {
+            return EMPTY;
+          }),
+          finalize(() => {
+            // Promise.resolve(true);
+            // setTimeout(() => {}, 10);
+            return this.isLoading$.next(false);
+          })
         );
       }
       this.isLoading$.next(false);
