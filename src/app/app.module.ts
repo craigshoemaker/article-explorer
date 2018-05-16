@@ -13,6 +13,7 @@ import { AppComponent } from './app.component';
 import { UserInfoComponent } from './components/user-info/user-info.component';
 import { ArticlesComponent } from './components/articles/articles.component';
 import { PathSelectorComponent } from './components/path-selector/path-selector.component';
+import { ArticleReader } from './modules/articleReader/articleReader';
 
 @NgModule({
     imports: [
@@ -25,7 +26,8 @@ import { PathSelectorComponent } from './components/path-selector/path-selector.
         ArticleService,
         UserInfoService,
         MessageService,
-        PathService
+        PathService,
+        ArticleReader
     ],
     declarations: [
         AppComponent,

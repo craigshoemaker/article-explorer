@@ -1,76 +1,96 @@
-import * as Walk from 'walk';
+import { Injectable, NgZone } from '@angular/core';
+import * as LineReader from 'line-by-line';
 import * as path from 'path';
-import * as fs from 'fs';
-import * as LineReader  from 'line-by-line';
-import { Observable } from 'rxjs'
-import { MetadataParser } from '../metadataParser/metadataParser';
+import { Observable } from 'rxjs';
+import * as Walk from 'walk';
+import { ArticleInfo } from '../articleInfo';
+import { ContentModel } from '../contentModel';
 import { ContentParser } from '../contentParser/contentParser';
 import { Metadata } from '../metaData';
-import { ContentModel } from '../contentModel';
-import { ArticleInfo } from '../articleInfo';
+import { MetadataParser } from '../metadataParser/metadataParser';
 
+export class Article {
+  filePath: string;
+  metadata: Metadata;
+  content: ContentModel;
+}
+
+@Injectable()
 export class ArticleReader {
-    filePath: string;
-    metadata: Metadata;
-    content: ContentModel;
+  // filePath: string;
+  // metadata: Metadata;
+  // content: ContentModel;
 
-    hasContent(): boolean {
-        return this.content !== null;
-    }
+  constructor(private zone: NgZone) {}
 
-    public static read(filePath: string, options?: any) {
-        return new Promise<ArticleReader>((resolve, reject) => {
+  // hasContent(): boolean {
+  //   return !!this.content; //  !== null;
+  // }
 
-            const reader = new LineReader(filePath, { end: 800 });
-            const article = new ArticleReader();
-            const data = [];
+  public read(filePath: string, options?: any) {
+    return new Promise<Article>((resolve, reject) => {
+      const reader = new LineReader(filePath, { end: 800 });
+      const article = new Article();
+      // const article = this;
+      const data = [];
 
-            article.filePath = filePath;
-        
-            reader.on('error', err => reject(err));
-            reader.on('line', line => data.push(line));
-            
-            reader.on('end', function () {
-                const contents = data.join('\n');
+      article.filePath = filePath;
 
-                const metadataParser = new MetadataParser();
-                const contentParser = new ContentParser();
+      reader.on('error', err => reject(err));
+      reader.on('line', line => data.push(line));
 
-                article.metadata = metadataParser.parse(contents);
+      reader.on('end', () => {
+        const contents = data.join('\n');
 
-                if(options && options.name) {
-                    if(article.metadata.github === options.name) {
-                        article.content = contentParser.parse(contents);
-                    } else {
-                        article.content = null;
-                    }
-                } else {
-                    article.content = contentParser.parse(contents);                    
-                }
+        const metadataParser = new MetadataParser();
+        const contentParser = new ContentParser();
 
-                resolve(article);
-            });
+        article.metadata = metadataParser.parse(contents);
+
+        if (options && options.name) {
+          if (article.metadata.github === options.name) {
+            article.content = contentParser.parse(contents);
+          } else {
+            article.content = null;
+          }
+        } else {
+          article.content = contentParser.parse(contents);
+        }
+
+        this.zone.run(() => {
+          resolve(article);
         });
-    }
+      });
+    });
+  }
 
-    public static list(folderPath: string): Observable<ArticleInfo> {
-        return Observable.create(observer => {
-            const walker = Walk.walk(folderPath);
-    
-            walker.on('file', (root, stats, next) => {
-                if (/\.md$/.test(stats.name)) {
-                    const info = new ArticleInfo(root, path.join(root, stats.name), stats);
-                    observer.next(info);
-                }
-                next();
-            });
+  public list(folderPath: string): Observable<ArticleInfo> {
+    return Observable.create(observer => {
+      const walker = Walk.walk(folderPath);
 
-            walker.on('errors', (root, stats, next) => {
-                observer.error(stats);
-                next();
-            });
+      walker.on('file', (root, stats, next) => {
+        if (/\.md$/.test(stats.name)) {
+          const info = new ArticleInfo(
+            root,
+            path.join(root, stats.name),
+            stats
+          );
 
-            walker.on('end', () => observer.complete());
-        });
-    }
+          this.zone.run(() => observer.next(info));
+
+          // observer.next(info);
+        }
+        next();
+      });
+
+      walker.on('errors', (root, stats, next) => {
+        observer.error(stats);
+        next();
+      });
+
+      walker.on('end', () => {
+        observer.complete();
+      });
+    });
+  }
 }

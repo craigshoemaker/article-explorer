@@ -1,14 +1,31 @@
-<div [hidden]="!isLoading" class="articles-loader">
+<div *ngIf="isLoading$ | async" class="articles-loader">
     <img src="../../../assets/images/loader.gif">
 </div>
+
 <div class="articles">
-    <div *ngFor='let article of articles'>
-        <div [attr.data-path]="article.filePath" 
-            (click)="articleClick($event)"
-            class="article">
-            <h2>{{ article.content.title }}</h2>
-            <p>{{ article.content.excerpt.substr(0, 200) }}...</p>
+    <div *ngFor='let article of articles$ | async as articles'>
+        <div [attr.data-path]="article.filePath" (click)="articleClick($event)" class="article">
+
+            <div *ngIf="article.content">
+                <h2>{{ article.content?.title }}</h2>
+                <p>{{ article.content?.excerpt.substr(0, 200) }}...</p>
+            </div>
+            <div *ngIf="!article.content">
+                Nada
+            </div>
+            {{article.content}}
+
             <p class="tag is-light">{{ article.metadata.refreshDate.toDateString() }}</p>
         </div>
+    </div>
+</div>
+<div class="sidebar">
+    <div *ngIf="olderThan30Days$ | async as older30">
+        {{older30.length}}
+    </div>
+</div>
+<div class="sidebar">
+    <div *ngIf="olderThan90Days$ | async as older90">
+        {{older90.length}}
     </div>
 </div>

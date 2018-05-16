@@ -7,11 +7,9 @@ import { PathService } from '../../services/path.service';
   styleUrls: [require('./path-selector.component.scss')]
 })
 export class PathSelectorComponent implements OnInit {
+  @Input() path: string;
 
-  @Input()
-  path: string;
-
-  constructor(private pathService: PathService) { }
+  constructor(private pathService: PathService) {}
 
   pathChanged() {
     this.pathService.changePath(this.path);
@@ -20,5 +18,4 @@ export class PathSelectorComponent implements OnInit {
   ngOnInit() {
     this.path = this.pathService.getPath();
   }
-
 }

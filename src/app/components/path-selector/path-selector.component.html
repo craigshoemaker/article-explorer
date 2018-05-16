@@ -1,8 +1,4 @@
-<input type="text" 
-    [(ngModel)]="path"
-    (change)="pathChanged()"
-    class="path"
-    >
+<input type="text" [(ngModel)]="path" class="path" (input)="pathChanged()">
 <!--
-    <input type="file" webkitdirectory="true">
+    <input type=" file " webkitdirectory="true ">
 -->

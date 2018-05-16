@@ -1,44 +1,62 @@
-import { Injectable, NgZone } from '@angular/core';
-import { Observable, Subscription, of, from } from 'rxjs';
-
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, EMPTY } from 'rxjs';
+import {
+  filter,
+  finalize,
+  mergeMap,
+  scan,
+  shareReplay,
+  switchMap
+} from 'rxjs/operators';
 import { ArticleReader } from '../modules/articleReader/articleReader';
-import { ArticleInfo } from '../modules/articleInfo';
+import { Message, MessageService } from './message.service';
+import { MessageEventTypes } from './messageEventTypes';
 
-import { mergeMap, filter, catchError, map } from 'rxjs/operators';
+interface Config {
+  user: string;
+  path: string;
+}
 
 @Injectable()
 export class ArticleService {
+  constructor(
+    private articleReader: ArticleReader,
+    private messageService: MessageService
+  ) {}
 
-  constructor(private zone: NgZone) { }
+  private configFromMessages$ = this.messageService.messages$.pipe(
+    scan(
+      (acc, message: Message) => {
+        switch (message.type) {
+          case MessageEventTypes.UserChanged:
+            return { ...acc, user: message.payload.name.trim() };
+          case MessageEventTypes.PathChanged:
+            return { ...acc, path: message.payload.path.trim() };
+        }
+      },
+      {} as Config
+    )
+  );
 
-  // getArticles(name: string, path: string): Observable<ArticleReader> {
+  isLoading$ = new BehaviorSubject(false);
 
-  //   return Observable.create(observer => {
-  //     const options = { name: name };
-  //     ArticleReader.list(path).subscribe({
-  //       next: info => {
-  //         ArticleReader.read(info.path, options).then(article => {
-  //           this.zone.run(() => {
-  //             if (article.hasContent()) {
-  //               observer.next(article);
-  //             }
-  //           });
-  //         });
-  //       },
-  //       error: err => observer.error(err),
-  //       complete: () => observer.complete()
-  //     });
-  //   });
-  // }
-
-  getArticles(name: string, path: string): Observable<ArticleReader> {
-    return ArticleReader.list(path).pipe(
-      mergeMap(info => from(ArticleReader.read(info.path, { name: name }))),
-      filter(reader => reader.hasContent())
-      // mergeMap(reader => of((reader))
-      // catchError(err => {
-      //   // do something, if you want
-      // })
-    );
-  }
+  articles$ = this.configFromMessages$.pipe(
+    switchMap(({ user, path }) => {
+      this.isLoading$.next(true);
+      if (user && path) {
+        return this.articleReader
+          .list(path)
+          .pipe(
+            mergeMap(info =>
+              this.articleReader.read(info.path, { name: name })
+            ),
+            filter(reader => !!reader.content),
+            finalize(() => this.isLoading$.next(false))
+          );
+      }
+      this.isLoading$.next(false);
+      return EMPTY;
+    }),
+    shareReplay(1)
+  );
 }
