@@ -23,6 +23,6 @@ export class UserInfoComponent implements OnInit {
 
   ngOnInit() {
     this.login = this.userInfoService.getLogin();
-    this.getInfo();
+    this.loginChanged();
   }
 }

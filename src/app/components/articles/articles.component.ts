@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as openInEditor from 'open-in-editor';
-import { Observable, pipe } from 'rxjs';
+import { Observable, pipe, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Article } from '../../modules/articleReader/article.model';
 import { ArticleService } from '../../services/article.service';
@@ -21,22 +21,12 @@ export class ArticlesComponent implements OnInit {
   olderThan30Days$: Observable<Article[]>;
   olderThan90Days$: Observable<Article[]>;
 
-  constructor(private articleService: ArticleService) {}
+  constructor(private articleService: ArticleService) { }
 
-  isLoading$ = this.articleService.isLoading$;
+  isLoading$: BehaviorSubject<boolean>;
 
   // Now get an array of Articles
   articles$ = this.articleService.articles$;
-  // articles$ = concat(
-  //   this.articleService.articles$.pipe(
-  //     scan((acc, article: any) => {
-  //       const foo = [...acc, article];
-  //       return [...acc, article];
-  //     }, []),
-  //     shareReplay(1)
-  //   ),
-  //   () => {}
-  // );
 
   // const thirtyDaysFromNow = moment()
   //   .add(30, 'd')
@@ -63,7 +53,9 @@ export class ArticlesComponent implements OnInit {
   //   // )
   // );
 
-  ngOnInit() {}
+  ngOnInit() {
+    setTimeout((() => this.isLoading$ = this.articleService.isLoading$), 0);
+  }
 
   articleClick(e) {
     const filePath = e.currentTarget.getAttribute('data-path');

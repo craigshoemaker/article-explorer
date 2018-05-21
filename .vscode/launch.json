@@ -7,6 +7,30 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Debug 2",
+            //"preLaunchTask": "tsc electron.ts --outDir .",
+            "runtimeArgs": [
+                //"cross-env",
+                //"NODE_ENV=dev",
+                "webpack-dev-server",
+                "--port=9229"
+            ],
+            "port": 9229
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch via NPM",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run-script",
+                "dev"
+            ],
+            "port": 9229
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Jasmine Tests",
             "args": [
                 "npm",

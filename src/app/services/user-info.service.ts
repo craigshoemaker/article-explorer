@@ -16,7 +16,7 @@ export class UserInfoService {
 
   changeLogin(name: string) {
     window.localStorage.setItem('login', name);
-    this.messageService.broadcast(MessageEventTypes.UserChanged, {
+    this.messageService.broadcast(MessageEventTypes.NameChanged, {
       name: name
     });
   }

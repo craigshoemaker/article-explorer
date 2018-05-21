@@ -17,5 +17,6 @@ export class PathSelectorComponent implements OnInit {
 
   ngOnInit() {
     this.path = this.pathService.getPath();
+    this.pathChanged();
   }
 }

@@ -1,19 +1,24 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
+
+export interface ArticleArguments {
+  name?: string;
+  path?: string;
+}
 
 export interface Message {
   type: string;
-  payload: any;
+  payload: ArticleArguments;
 }
 
-type MessageCallback = (payload: any) => void;
+type MessageCallback = (payload: ArticleArguments) => void;
 
 @Injectable()
 export class MessageService {
-  private handler = new Subject<Message>();
+  private handler = new ReplaySubject<Message>();
   messages$ = this.handler.asObservable();
 
-  broadcast(type: string, payload: any) {
+  broadcast(type: string, payload: ArticleArguments) {
     this.handler.next({ type, payload });
   }
 }

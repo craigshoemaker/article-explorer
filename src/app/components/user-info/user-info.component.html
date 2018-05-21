@@ -1,7 +1,7 @@
 <div class="user-info">
     <img class="avatar" [src]="info.avatar_url" [alt]="info.name" width="125">
     <div class="name">
-        <input [(ngModel)]="login" (input)="loginChanged()" name="login" class="login" type="text">
+        <input [(ngModel)]="login" (blur)="loginChanged()" name="login" class="login" type="text">
     </div>
     <div class="bio">{{ info.bio }}</div>
     <div class="location">{{ info.location }}</div>
