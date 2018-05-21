@@ -2,18 +2,17 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY } from 'rxjs';
 import {
   catchError,
+  distinctUntilChanged,
   filter,
   finalize,
   mergeMap,
   scan,
   shareReplay,
-  switchMap,
-  distinctUntilChanged,
-  tap
+  switchMap
 } from 'rxjs/operators';
 import { Article } from '../modules/articleReader/article.model';
 import { ArticleReader } from '../modules/articleReader/articleReader';
-import { Message, MessageService, ArticleArguments } from './message.service';
+import { ArticleArguments, Message, MessageService } from './message.service';
 import { MessageEventTypes } from './messageEventTypes';
 
 @Injectable()
@@ -21,7 +20,7 @@ export class ArticleService {
   constructor(
     private articleReader: ArticleReader,
     private messageService: MessageService
-  ) { }
+  ) {}
 
   private configFromMessages$ = this.messageService.messages$.pipe(
     scan(
@@ -40,7 +39,9 @@ export class ArticleService {
   isLoading$ = new BehaviorSubject(false);
 
   articles$ = this.configFromMessages$.pipe(
-    distinctUntilChanged((orig, changed) => JSON.stringify(orig) === JSON.stringify(changed)),
+    distinctUntilChanged(
+      (orig, changed) => JSON.stringify(orig) === JSON.stringify(changed)
+    ),
     switchMap(({ name, path }) => {
       this.isLoading$.next(true);
       if (name && path) {
@@ -49,9 +50,7 @@ export class ArticleService {
           filter(article => article.metadata.github === name),
           // Now turn it into Observble<Article[]>
           scan((acc, article: Article) => [...acc, article], []),
-          catchError(err => {
-            return EMPTY;
-          }),
+          catchError(err => EMPTY),
           finalize(() => {
             // Promise.resolve(true);
             // setTimeout(() => {}, 10);
