@@ -11,8 +11,6 @@ export interface Message {
   payload: ArticleArguments;
 }
 
-type MessageCallback = (payload: ArticleArguments) => void;
-
 @Injectable()
 export class MessageService {
   private handler = new ReplaySubject<Message>();

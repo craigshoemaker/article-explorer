@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY } from 'rxjs';
+import { BehaviorSubject, EMPTY, pipe } from 'rxjs';
 import {
   catchError,
   distinctUntilChanged,
@@ -15,12 +15,18 @@ import { ArticleReader } from '../modules/articleReader/articleReader';
 import { ArticleArguments, Message, MessageService } from './message.service';
 import { MessageEventTypes } from './messageEventTypes';
 
+const distinctUntilChangedByObject = () =>
+  pipe(distinctUntilChanged(
+    (orig, changed) => JSON.stringify(orig) === JSON.stringify(changed)
+  )
+  );
+
 @Injectable()
 export class ArticleService {
   constructor(
     private articleReader: ArticleReader,
     private messageService: MessageService
-  ) {}
+  ) { }
 
   private configFromMessages$ = this.messageService.messages$.pipe(
     scan(
@@ -39,9 +45,7 @@ export class ArticleService {
   isLoading$ = new BehaviorSubject(false);
 
   articles$ = this.configFromMessages$.pipe(
-    distinctUntilChanged(
-      (orig, changed) => JSON.stringify(orig) === JSON.stringify(changed)
-    ),
+    distinctUntilChangedByObject(),
     switchMap(({ name, path }) => {
       this.isLoading$.next(true);
       if (name && path) {
